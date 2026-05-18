@@ -1,0 +1,51 @@
+version: '3.9'
+services:
+  users-service-rest-cs:
+    build:
+      context: ./users-service-rest
+      dockerfile: Dockerfile
+    container_name: diploma_users_rest_cs
+    restart: unless-stopped
+    environment:
+      - PORT=3012
+      - DB_SCHEMA=users_rest_cs
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=diploma_db
+      - DB_USER=diploma
+      - DB_PASS=diploma_pass
+    ports:
+      - '3012:3012'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - diploma_default
+
+  users-service-rpc-cs:
+    build:
+      context: ./users-service-rpc
+      dockerfile: Dockerfile
+    container_name: diploma_users_rpc_cs
+    restart: unless-stopped
+    environment:
+      - GRPC_PORT=5013
+      - DB_SCHEMA=users_rpc_cs
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=diploma_db
+      - DB_USER=diploma
+      - DB_PASS=diploma_pass
+    ports:
+      - '5013:5013'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - diploma_default
+
+networks:
+  diploma_default:
+    external: true

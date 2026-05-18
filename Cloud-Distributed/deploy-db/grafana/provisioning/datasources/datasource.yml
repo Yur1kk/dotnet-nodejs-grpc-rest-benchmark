@@ -1,0 +1,61 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: InfluxDB-REST
+    orgId: 1
+  - name: InfluxDB-RPC
+    orgId: 1
+  - name: InfluxDB-REST-CS
+    orgId: 1
+  - name: InfluxDB-RPC-CS
+    orgId: 1
+
+datasources:
+  - name: InfluxDB-REST
+    type: influxdb
+    uid: InfluxDB-REST
+    access: proxy
+    url: http://influxdb:8086
+    database: k6_rest
+    isDefault: true
+    jsonData:
+      httpMode: GET
+    version: 1
+    editable: true
+
+  - name: InfluxDB-RPC
+    type: influxdb
+    uid: InfluxDB-RPC
+    access: proxy
+    url: http://influxdb:8086
+    database: k6_rpc
+    isDefault: false
+    jsonData:
+      httpMode: GET
+    version: 1
+    editable: true
+
+  # ── C# Stack Datasources ──────────────────────────────────────
+  - name: InfluxDB-REST-CS
+    type: influxdb
+    uid: InfluxDB-REST-CS
+    access: proxy
+    url: http://influxdb:8086
+    database: k6_rest_cs
+    isDefault: false
+    jsonData:
+      httpMode: GET
+    version: 1
+    editable: true
+
+  - name: InfluxDB-RPC-CS
+    type: influxdb
+    uid: InfluxDB-RPC-CS
+    access: proxy
+    url: http://influxdb:8086
+    database: k6_rpc_cs
+    isDefault: false
+    jsonData:
+      httpMode: GET
+    version: 1
+    editable: true

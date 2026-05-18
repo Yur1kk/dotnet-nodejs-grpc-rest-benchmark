@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package users;
+
+service UsersService {
+  rpc GetUsers (GetUsersRequest) returns (GetUsersResponse);
+  rpc GetUser (GetUserRequest) returns (UserMessage);
+  rpc CreateUser (CreateUserRequest) returns (UserMessage);
+  rpc UpdateUser (UpdateUserRequest) returns (UserMessage);
+  rpc DeleteUser (DeleteUserRequest) returns (UserMessage);
+  rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
+  rpc ExportUsers (ExportUsersRequest) returns (ExportUsersResponse);
+  rpc ImportUsers (ImportUsersRequest) returns (ImportUsersResponse);
+}
+
+message UserMessage {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+  string role = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+}
+
+message GetUsersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message PaginationMeta {
+  int32 total = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  int32 totalPages = 4;
+}
+
+message GetUsersResponse {
+  repeated UserMessage data = 1;
+  PaginationMeta meta = 2;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+  string role = 4;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int32 age = 4;
+  string role = 5;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message SearchUsersRequest {
+  string name = 1;
+  string email = 2;
+  string role = 3;
+}
+
+message SearchUsersResponse {
+  repeated UserMessage data = 1;
+}
+
+message ExportUsersRequest {}
+
+message ExportUsersResponse {
+  repeated UserMessage users = 1;
+}
+
+message ImportUserRow {
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+  string role = 4;
+}
+
+message ImportUsersRequest {
+  repeated ImportUserRow rows = 1;
+}
+
+message ImportUsersResponse {
+  int32 imported = 1;
+  repeated string errors = 2;
+}

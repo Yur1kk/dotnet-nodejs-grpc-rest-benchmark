@@ -1,0 +1,23 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.suo
+*.sln.docstates
+.vs/
+TestResults/
+
+# Node.js
+node_modules/
+dist/
+build/
+npm-debug.log
+yarn-error.log
+
+# Environment variables (Never commit .env files)
+.env
+*.env
+
+# MacOS/Windows
+.DS_Store
+Thumbs.db

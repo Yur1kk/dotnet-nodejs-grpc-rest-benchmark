@@ -1,0 +1,51 @@
+version: '3.9'
+services:
+  orders-service-rest-cs:
+    build:
+      context: ./orders-service-rest
+      dockerfile: Dockerfile
+    container_name: diploma_orders_rest_cs
+    restart: unless-stopped
+    environment:
+      - PORT=3014
+      - DB_SCHEMA=orders_rest_cs
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=diploma_db
+      - DB_USER=diploma
+      - DB_PASS=diploma_pass
+    ports:
+      - '3014:3014'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - diploma_default
+
+  orders-service-rpc-cs:
+    build:
+      context: ./orders-service-rpc
+      dockerfile: Dockerfile
+    container_name: diploma_orders_rpc_cs
+    restart: unless-stopped
+    environment:
+      - GRPC_PORT=5015
+      - DB_SCHEMA=orders_rpc_cs
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=diploma_db
+      - DB_USER=diploma
+      - DB_PASS=diploma_pass
+    ports:
+      - '5015:5015'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - diploma_default
+
+networks:
+  diploma_default:
+    external: true

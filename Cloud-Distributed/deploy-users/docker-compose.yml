@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  users-service-rest:
+    build:
+      context: ./users-service-rest
+      dockerfile: Dockerfile
+    container_name: diploma_users_rest
+    restart: unless-stopped
+    environment:
+      - PORT=3002
+      - DATABASE_URL=postgresql://diploma:diploma_pass@10.186.0.2:5432/diploma_db?schema=users_rest&connection_limit=150
+      - UV_THREADPOOL_SIZE=64
+    ports:
+      - '3002:3002'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  users-service-rpc:
+    build:
+      context: ./users-service-rpc
+      dockerfile: Dockerfile
+    container_name: diploma_users_rpc
+    restart: unless-stopped
+    environment:
+      - PORT=3003
+      - DATABASE_URL=postgresql://diploma:diploma_pass@10.186.0.2:5432/diploma_db?schema=users_rpc&connection_limit=150
+      - UV_THREADPOOL_SIZE=64
+    ports:
+      - '3003:3003'
+      - '5003:5003'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
