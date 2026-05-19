@@ -181,15 +181,10 @@ VUS=500 ./run-tests.sh gateway
 
 ## Приклади / скриншоти
 
-Нижче наведено зведені графіки продуктивності (RPS та затримка), згенеровані на основі сирих даних моніторингу з InfluxDB, які порівнюють різні архітектурні підходи в локальному та хмарному (GCP) середовищах.
-
-### Локальне середовище
-![Node.js Local Comparison](screenshots/node_local_comparison.png)
-![.NET 8 Local Comparison](screenshots/net_local_comparison.png)
-
-### Хмарне середовище (GCP Cluster)
-![Node.js Cloud Comparison](screenshots/node_cloud_comparison.png)
-![.NET 8 Cloud Comparison](screenshots/net_cloud_comparison.png)
+Зображення та графіки моніторингу збережені в репозиторії:
+* Скриншоти налаштування інфраструктури GCP.
+* Консольні логи запуску навантаження за допомогою k6.
+* Дашборди Grafana для REST та gRPC сценаріїв.
 
 ---
 
@@ -215,8 +210,3 @@ VUS=500 ./run-tests.sh gateway
 8. Вступ до навантажувального тестування за допомогою k6. Офіційна документація Grafana Labs. [Режим доступу: https://k6.io/docs/]
 9. ASP.NET Core documentation. Microsoft Learn. [Режим доступу: https://learn.microsoft.com/en-us/aspnet/core/]
 10. NestJS Documentation: A progressive Node.js framework. Official NestJS Documentation. [Режим доступу: https://docs.nestjs.com/]
-
----
-
-## Screenshots
-
