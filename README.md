@@ -181,10 +181,15 @@ VUS=500 ./run-tests.sh gateway
 
 ## Приклади / скриншоти
 
-Зображення та графіки моніторингу збережені в репозиторії:
-* Скриншоти налаштування інфраструктури GCP.
-* Консольні логи запуску навантаження за допомогою k6.
-* Дашборди Grafana для REST та gRPC сценаріїв.
+Нижче наведено зведені графіки продуктивності (RPS та затримка), згенеровані на основі сирих даних моніторингу з InfluxDB, які порівнюють різні архітектурні підходи в локальному та хмарному (GCP) середовищах.
+
+### Локальне середовище
+![Node.js Local Comparison](screenshots/node_local_comparison.png)
+![.NET 8 Local Comparison](screenshots/net_local_comparison.png)
+
+### Хмарне середовище (GCP Cluster)
+![Node.js Cloud Comparison](screenshots/node_cloud_comparison.png)
+![.NET 8 Cloud Comparison](screenshots/net_cloud_comparison.png)
 
 ---
 
