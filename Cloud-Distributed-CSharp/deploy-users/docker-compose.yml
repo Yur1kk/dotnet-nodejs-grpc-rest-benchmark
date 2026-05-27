@@ -9,7 +9,7 @@ services:
     environment:
       - PORT=3012
       - DB_SCHEMA=users_rest_cs
-      - DB_HOST=${DB_HOST:-postgres}
+      - DB_HOST=${DB_HOST:-10.186.0.2}
       - DB_PORT=5432
       - DB_NAME=diploma_db
       - DB_USER=diploma
@@ -32,11 +32,12 @@ services:
     environment:
       - GRPC_PORT=5013
       - DB_SCHEMA=users_rpc_cs
-      - DB_HOST=${DB_HOST:-postgres}
+      - DB_HOST=${DB_HOST:-10.186.0.2}
       - DB_PORT=5432
       - DB_NAME=diploma_db
       - DB_USER=diploma
       - DB_PASS=diploma_pass
+
     ports:
       - '5013:5013'
     ulimits:
