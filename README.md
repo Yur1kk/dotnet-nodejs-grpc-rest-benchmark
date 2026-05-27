@@ -454,22 +454,47 @@ VUS=1000 ./run-tests.sh direct
 | **gateway-vm** | будь-яка | API шлюзи + k6 тести |
 
 > **IP-адреси вище — приклад конкретного середовища.** Якщо ви створюєте власні VM з іншими адресами:
-> 1. Створіть файли `.env` на основі `.env.example` у відповідних папках деплою та вкажіть туди **свої внутрішні IP**:
+> 1. Створіть файли `.env` на основі `.env.example` у відповідних папках деплою:
 >    - **Для Node.js (`Cloud-Distributed/`):**
->      - `deploy-users/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `DB_HOST` (IP вашої db-vm)
->      - `deploy-orders/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `DB_HOST` та `USERS_HOST` (IP вашої users-vm)
->      - `deploy-gateway/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `USERS_HOST` та `ORDERS_HOST` (IP вашої orders-vm)
+>      ```bash
+>      # На users-vm:
+>      cp Cloud-Distributed/deploy-users/.env.example Cloud-Distributed/deploy-users/.env
+>      # На orders-vm:
+>      cp Cloud-Distributed/deploy-orders/.env.example Cloud-Distributed/deploy-orders/.env
+>      # На gateway-vm:
+>      cp Cloud-Distributed/deploy-gateway/.env.example Cloud-Distributed/deploy-gateway/.env
+>      ```
+>      Вкажіть **ваші власні внутрішні IP** у створених файлах `.env` для `DB_HOST`, `USERS_HOST`, `ORDERS_HOST`.
 >    - **Для .NET (`Cloud-Distributed-CSharp/`):**
->      - `deploy-users/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `DB_HOST`
->      - `deploy-orders/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `DB_HOST`
->      - `deploy-gateway/` ➔ скопіюйте `.env.example` в `.env`, вкажіть `USERS_HOST` та `ORDERS_HOST`
+>      ```bash
+>      # На users-vm:
+>      cp Cloud-Distributed-CSharp/deploy-users/.env.example Cloud-Distributed-CSharp/deploy-users/.env
+>      # На orders-vm:
+>      cp Cloud-Distributed-CSharp/deploy-orders/.env.example Cloud-Distributed-CSharp/deploy-orders/.env
+>      # На gateway-vm:
+>      cp Cloud-Distributed-CSharp/deploy-gateway/.env.example Cloud-Distributed-CSharp/deploy-gateway/.env
+>      ```
+>      Вкажіть **ваші власні внутрішні IP** у створених файлах `.env` для `DB_HOST`, `USERS_HOST`, `ORDERS_HOST`.
 > 2. Також оновіть IP-адреси у скриптах запуску тестів k6:
 >    - `Cloud-Distributed/deploy-gateway/run-tests.sh` — блок `ENV="cloud"` (рядки з IP)
 >    - `Cloud-Distributed-CSharp/deploy-gateway/run-tests.sh` — аналогічно (блок `ENV="cloud"`)
 
-### Крок 1 — Підготовка VM
 
-На кожній VM встановіть Docker:
+### Крок 1 — Налаштування VPC Firewall
+
+Для доступу до Grafana, портів мікросервісів та шлюзів ззовні (налаштовується один раз через Cloud Shell або локальний gcloud SDK):
+```bash
+gcloud compute firewall-rules create allow-diploma-ports \
+  --allow tcp:3000-3015,tcp:5003,tcp:5005,tcp:5013,tcp:5015,tcp:3006,tcp:8086 \
+  --source-ranges 0.0.0.0/0 \
+  --description "Diploma benchmark ports"
+```
+
+> **Примітка:** Налаштувати правила брандмауера та створити віртуальні машини також можна безпосередньо через веб-інтерфейс (GCP Console UI), створивши відповідне Firewall Rule та відкривши зазначені TCP-порти для вхідного трафіку (`0.0.0.0/0`).
+
+### Крок 2 — Підготовка VM
+
+На кожній VM встановіть Docker та docker-compose:
 ```bash
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose
@@ -477,14 +502,14 @@ sudo usermod -aG docker $USER
 # Перелогіньтесь для застосування групи docker
 ```
 
-### Крок 2 — Клонування репозиторію (на кожній VM)
+### Крок 3 — Клонування репозиторію (на кожній VM)
 
 ```bash
 git clone https://github.com/Yur1kk/dotnet-nodejs-grpc-rest-benchmark.git
 cd dotnet-nodejs-grpc-rest-benchmark
 ```
 
-### Крок 3 — Запуск інфраструктури (db-vm: 10.186.0.2)
+### Крок 4 — Запуск інфраструктури (db-vm: 10.186.0.2)
 
 ```bash
 cd Cloud-Distributed/deploy-db
@@ -505,11 +530,11 @@ curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE DATABASE k6
 curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE DATABASE k6_rpc_cs"
 ```
 
-### Крок 4 — Розгортання та тестування екосистем (послідовно)
+### Крок 5 — Розгортання та тестування екосистем (послідовно)
 
 > **ВАЖЛИВО:** Для коректного порівняння продуктивності (бенчмарку) та з метою економії хмарних ресурсів екосистеми Node.js та .NET запускаються **послідовно**. Одночасний запуск обох екосистем призведе до конфлікту портів, перевищення лімітів RAM/CPU та викривлення результатів вимірювань.
 
-#### 4.1 — Екосистема Node.js (запуск, наповнення та тестування)
+#### 5.1 — Екосистема Node.js (запуск, наповнення та тестування)
 
 **1. На users-vm (10.186.0.6):**
 ```bash
@@ -565,7 +590,7 @@ sudo ./run-tests.sh
 
 ---
 
-#### 4.2 — Екосистема .NET (запуск та тестування)
+#### 5.2 — Екосистема .NET (запуск та тестування)
 
 **1. На users-vm (10.186.0.6):**
 ```bash
@@ -611,15 +636,6 @@ sudo ./run-tests.sh
 
 > Скрипт `run-tests.sh` **автоматично** визначає середовище (local/cloud) за IP-адресою та використовує відповідні URL-адреси.
 
-### Крок 8 — Налаштування VPC Firewall
-
-Для доступу до Grafana та портів мікросервісів ззовні:
-```bash
-gcloud compute firewall-rules create allow-diploma-ports \
-  --allow tcp:3000-3015,tcp:5003,tcp:5005,tcp:5013,tcp:5015,tcp:3006,tcp:8086 \
-  --source-ranges 0.0.0.0/0 \
-  --description "Diploma benchmark ports"
-```
 
 ---
 
