@@ -518,6 +518,8 @@ cd ../../Cloud-Distributed-CSharp/deploy-users
 sudo docker-compose up -d --build
 ```
 
+> **Примітка:** При першому запуску контейнерів Node.js автоматично виконується синхронізація схеми через `npx prisma db push` для створення необхідних таблиць в PostgreSQL.
+
 ### Крок 5 — Запуск Orders мікросервісів (orders-vm: 10.186.0.4)
 
 ```bash
@@ -530,6 +532,8 @@ sudo docker network create diploma_default 2>/dev/null || true
 cd ../../Cloud-Distributed-CSharp/deploy-orders
 sudo docker-compose up -d --build
 ```
+
+> **Примітка:** При першому запуску контейнерів Node.js автоматично виконується синхронізація схеми через `npx prisma db push` для створення необхідних таблиць в PostgreSQL.
 
 ### Крок 6 — Наповнення тестовими даними (seed)
 
