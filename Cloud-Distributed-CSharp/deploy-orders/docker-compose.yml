@@ -9,7 +9,7 @@ services:
     environment:
       - PORT=3014
       - DB_SCHEMA=orders_rest_cs
-      - DB_HOST=postgres
+      - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=5432
       - DB_NAME=diploma_db
       - DB_USER=diploma
@@ -32,7 +32,7 @@ services:
     environment:
       - GRPC_PORT=5015
       - DB_SCHEMA=orders_rpc_cs
-      - DB_HOST=postgres
+      - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=5432
       - DB_NAME=diploma_db
       - DB_USER=diploma

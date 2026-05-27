@@ -16,10 +16,10 @@ fi
 ENV="LOCAL"
 
 # Detect environment via IP (robust check for GCP)
-if hostname -I | grep -q "10.186.0"; then
+if hostname -I 2>/dev/null | grep -q "10.186.0"; then
   ENV="CLOUD"
-  USERS_URL="http://10.186.0.6:3002"
-  ORDERS_URL="http://10.186.0.4:3004"
+  USERS_URL="http://10.186.0.6:3012"
+  ORDERS_URL="http://10.186.0.4:3014"
 else
   ENV="LOCAL"
   USERS_URL="http://localhost:3012"

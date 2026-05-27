@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3002
-      - DATABASE_URL=postgresql://diploma:diploma_pass@10.186.0.2:5432/diploma_db?schema=users_rest&connection_limit=150
+      - DATABASE_URL=postgresql://diploma:diploma_pass@${DB_HOST:-10.186.0.2}:5432/diploma_db?schema=users_rest&connection_limit=150
       - UV_THREADPOOL_SIZE=64
     ports:
       - '3002:3002'
@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3003
-      - DATABASE_URL=postgresql://diploma:diploma_pass@10.186.0.2:5432/diploma_db?schema=users_rpc&connection_limit=150
+      - DATABASE_URL=postgresql://diploma:diploma_pass@${DB_HOST:-10.186.0.2}:5432/diploma_db?schema=users_rpc&connection_limit=150
       - UV_THREADPOOL_SIZE=64
     ports:
       - '3003:3003'

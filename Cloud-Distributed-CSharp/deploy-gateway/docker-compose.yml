@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3010
-      - USERS_SERVICE_URL=http://diploma_users_rest_cs:3012
-      - ORDERS_SERVICE_URL=http://diploma_orders_rest_cs:3014
+      - USERS_SERVICE_URL=http://${USERS_HOST:-diploma_users_rest_cs}:3012
+      - ORDERS_SERVICE_URL=http://${ORDERS_HOST:-diploma_orders_rest_cs}:3014
     ports:
       - '3010:3010'
     ulimits:
@@ -27,8 +27,8 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3011
-      - USERS_SERVICE_GRPC_URL=http://diploma_users_rpc_cs:5013
-      - ORDERS_SERVICE_GRPC_URL=http://diploma_orders_rpc_cs:5015
+      - USERS_SERVICE_GRPC_URL=http://${USERS_HOST:-diploma_users_rpc_cs}:5013
+      - ORDERS_SERVICE_GRPC_URL=http://${ORDERS_HOST:-diploma_orders_rpc_cs}:5015
     ports:
       - '3011:3011'
     ulimits:
