@@ -505,77 +505,109 @@ curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE DATABASE k6
 curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE DATABASE k6_rpc_cs"
 ```
 
-### Крок 4 — Запуск Users мікросервісів (users-vm: 10.186.0.6)
+### Крок 4 — Розгортання та тестування екосистем (послідовно)
 
+> **ВАЖЛИВО:** Для коректного порівняння продуктивності (бенчмарку) та з метою економії хмарних ресурсів екосистеми Node.js та .NET запускаються **послідовно**. Одночасний запуск обох екосистем призведе до конфлікту портів, перевищення лімітів RAM/CPU та викривлення результатів вимірювань.
+
+#### 4.1 — Екосистема Node.js (запуск, наповнення та тестування)
+
+**1. На users-vm (10.186.0.6):**
 ```bash
-# Node.js
 cd Cloud-Distributed/deploy-users
 sudo docker-compose up -d --build
-
-# .NET (потрібна мережа diploma_default — створіть вручну, бо deploy-db на іншій VM)
-sudo docker network create diploma_default 2>/dev/null || true
-cd ../../Cloud-Distributed-CSharp/deploy-users
-sudo docker-compose up -d --build
 ```
-
 > **Примітка:** При першому запуску контейнерів Node.js автоматично виконується синхронізація схеми через `npx prisma db push` для створення необхідних таблиць в PostgreSQL.
 
-### Крок 5 — Запуск Orders мікросервісів (orders-vm: 10.186.0.4)
-
+**2. На orders-vm (10.186.0.4):**
 ```bash
-# Node.js
 cd Cloud-Distributed/deploy-orders
 sudo docker-compose up -d --build
-
-# .NET
-sudo docker network create diploma_default 2>/dev/null || true
-cd ../../Cloud-Distributed-CSharp/deploy-orders
-sudo docker-compose up -d --build
 ```
-
 > **Примітка:** При першому запуску контейнерів Node.js автоматично виконується синхронізація схеми через `npx prisma db push` для створення необхідних таблиць в PostgreSQL.
 
-### Крок 6 — Наповнення тестовими даними (seed)
-
+**3. Наповнення тестовими даними (seed):**
 На **users-vm**:
 ```bash
 sudo docker exec -it diploma_users_rest npm run seed
 sudo docker exec -it diploma_users_rpc npm run seed
 ```
-
 На **orders-vm**:
 ```bash
 sudo docker exec -it diploma_orders_rest npm run seed
 sudo docker exec -it diploma_orders_rpc npm run seed
 ```
 
-> .NET мікросервіси виконують seed автоматично при старті.
-
-### Крок 7 — Запуск шлюзів та тестів (gateway-vm)
-
+**4. На gateway-vm (шлюзи):**
+Запустіть API-шлюзи:
 ```bash
-# Node.js шлюзи
 cd Cloud-Distributed/deploy-gateway
 sudo docker-compose up -d --build
+```
+Запустіть навантажувальні тести Node.js:
+```bash
+chmod +x run-tests.sh
+sudo ./run-tests.sh
+```
 
-# .NET шлюзи
+**5. Зупинка контейнерів Node.js (перед запуском .NET):**
+* На `users-vm`:
+  ```bash
+  cd Cloud-Distributed/deploy-users && sudo docker-compose down
+  ```
+* На `orders-vm`:
+  ```bash
+  cd Cloud-Distributed/deploy-orders && sudo docker-compose down
+  ```
+* На `gateway-vm`:
+  ```bash
+  cd Cloud-Distributed/deploy-gateway && sudo docker-compose down
+  ```
+
+---
+
+#### 4.2 — Екосистема .NET (запуск та тестування)
+
+**1. На users-vm (10.186.0.6):**
+```bash
 sudo docker network create diploma_default 2>/dev/null || true
-cd ../../Cloud-Distributed-CSharp/deploy-gateway
+cd Cloud-Distributed-CSharp/deploy-users
+sudo docker-compose up -d --build
+```
+> **Примітка:** .NET мікросервіси виконують створення таблиць (EF Core міграції) та seed-наповнення автоматично при старті.
+
+**2. На orders-vm (10.186.0.4):**
+```bash
+sudo docker network create diploma_default 2>/dev/null || true
+cd Cloud-Distributed-CSharp/deploy-orders
 sudo docker-compose up -d --build
 ```
 
-Запуск тестів:
+**3. На gateway-vm (шлюзи):**
+Запустіть API-шлюзи:
 ```bash
-# Node.js
-cd Cloud-Distributed/deploy-gateway
-chmod +x run-tests.sh
-sudo ./run-tests.sh
-
-# .NET
-cd ../../Cloud-Distributed-CSharp/deploy-gateway
+sudo docker network create diploma_default 2>/dev/null || true
+cd Cloud-Distributed-CSharp/deploy-gateway
+sudo docker-compose up -d --build
+```
+Запустіть навантажувальні тести .NET:
+```bash
 chmod +x run-tests.sh fair-compare.sh
 sudo ./run-tests.sh
 ```
+
+**4. Зупинка контейнерів .NET після завершення тестів:**
+* На `users-vm`:
+  ```bash
+  cd Cloud-Distributed-CSharp/deploy-users && sudo docker-compose down
+  ```
+* На `orders-vm`:
+  ```bash
+  cd Cloud-Distributed-CSharp/deploy-orders && sudo docker-compose down
+  ```
+* На `gateway-vm`:
+  ```bash
+  cd Cloud-Distributed-CSharp/deploy-gateway && sudo docker-compose down
+  ```
 
 > Скрипт `run-tests.sh` **автоматично** визначає середовище (local/cloud) за IP-адресою та використовує відповідні URL-адреси.
 
