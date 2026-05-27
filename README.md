@@ -76,13 +76,19 @@ dotnet-nodejs-grpc-rest-benchmark/
 │   │
 │   ├── deploy-gateway/                       # API-шлюзи та навантажувальні тести
 │   │   ├── docker-compose.yml
+│   │   ├── .env                              # Локальні змінні хостів
+│   │   ├── .env.example                      # Шаблон хмарних/локальних змінних
 │   │   ├── run-tests.sh                      # Головний скрипт автоматизації тестів
 │   │   ├── proto/                            # Protobuf-схеми для шлюзів
 │   │   ├── rest-api-gateway/                 # NestJS REST-шлюз (HTTP проксі)
+│   │   │   ├── .env                          # Локальні змінні порту та downstream URL
+│   │   │   ├── .env.example                  # Шаблон локальних змінних
 │   │   │   ├── src/
 │   │   │   ├── Dockerfile
 │   │   │   └── package.json
 │   │   ├── rpc-api-gateway/                  # NestJS gRPC-шлюз (REST → gRPC трансляція)
+│   │   │   ├── .env
+│   │   │   ├── .env.example
 │   │   │   ├── src/
 │   │   │   ├── proto/
 │   │   │   ├── Dockerfile
@@ -100,29 +106,59 @@ dotnet-nodejs-grpc-rest-benchmark/
 │   │
 │   ├── deploy-users/                         # Мікросервіси домену Users
 │   │   ├── docker-compose.yml
+│   │   ├── .env                              # Змінні для зв'язку з БД
+│   │   ├── .env.example                      # Шаблон змінних
 │   │   ├── proto/
 │   │   ├── users-service-rest/               # NestJS REST мікросервіс користувачів
+│   │   │   ├── .env                          # Локальні змінні БД (localhost)
+│   │   │   ├── .env.example                  # Шаблон локальних змінних БД
+│   │   │   ├── src/
+│   │   │   ├── Dockerfile
+│   │   │   └── package.json
 │   │   └── users-service-rpc/                # NestJS gRPC мікросервіс користувачів
+│   │       ├── .env
+│   │       ├── .env.example
+│   │       ├── src/
+│   │       ├── Dockerfile
+│   │       └── package.json
 │   │
 │   └── deploy-orders/                        # Мікросервіси домену Orders
 │       ├── docker-compose.yml
+│       ├── .env
+│       ├── .env.example
 │       ├── proto/
 │       ├── orders-service-rest/              # NestJS REST мікросервіс замовлень
+│       │   ├── .env
+│       │   ├── .env.example
+│       │   ├── src/
+│       │   ├── Dockerfile
+│       │   └── package.json
 │       └── orders-service-rpc/               # NestJS gRPC мікросервіс замовлень
+│           ├── .env
+│           ├── .env.example
+│           ├── src/
+│           ├── Dockerfile
+│           └── package.json
 │
 └── Cloud-Distributed-CSharp/                 # .NET 8 / ASP.NET Core екосистема
     ├── pack.ps1
     │
     ├── deploy-gateway/                        # .NET API-шлюзи та тести
     │   ├── docker-compose.yml
+    │   ├── .env
+    │   ├── .env.example
     │   ├── run-tests.sh                       # Скрипт автоматизації тестів (.NET)
     │   ├── fair-compare.sh                    # Скрипт чесного порівняння REST vs gRPC
     │   ├── proto/
     │   ├── rest-api-gateway/                  # ASP.NET Core REST-шлюз
+    │   │   ├── .env
+    │   │   ├── .env.example
     │   │   ├── Program.cs
     │   │   ├── RestGateway.csproj
     │   │   └── Dockerfile
     │   ├── rpc-api-gateway/                   # ASP.NET Core gRPC-шлюз
+    │   │   ├── .env
+    │   │   ├── .env.example
     │   │   ├── Program.cs
     │   │   ├── Proto/
     │   │   ├── RpcGateway.csproj
@@ -136,13 +172,33 @@ dotnet-nodejs-grpc-rest-benchmark/
     │
     ├── deploy-users/                          # .NET мікросервіси домену Users
     │   ├── docker-compose.yml
+    │   ├── .env
+    │   ├── .env.example
     │   ├── users-service-rest/                # ASP.NET Core REST мікросервіс
+    │   │   ├── .env
+    │   │   ├── .env.example
+    │   │   ├── Program.cs
+    │   │   └── Users.Rest.csproj
     │   └── users-service-rpc/                 # ASP.NET Core gRPC мікросервіс
+    │       ├── .env
+    │       ├── .env.example
+    │       ├── Program.cs
+    │       └── Users.Rpc.csproj
     │
     └── deploy-orders/                         # .NET мікросервіси домену Orders
         ├── docker-compose.yml
+        ├── .env
+        ├── .env.example
         ├── orders-service-rest/               # ASP.NET Core REST мікросервіс
+        │   ├── .env
+        │   ├── .env.example
+        │   ├── Program.cs
+        │   └── Orders.Rest.csproj
         └── orders-service-rpc/                # ASP.NET Core gRPC мікросервіс
+            ├── .env
+            ├── .env.example
+            ├── Program.cs
+            └── Orders.Rpc.csproj
 ```
 
 ---
